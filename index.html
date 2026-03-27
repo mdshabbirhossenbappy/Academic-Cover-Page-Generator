@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<bappy lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Cover Page Creator</title>
+    <style>
+        :root {
+            --accent: #6366f1;
+            --sidebar-bg: #1e293b;
+            --body-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--body-bg);
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 340px;
+            background: var(--sidebar-bg);
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent); border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .field { margin-bottom: 12px; }
+        label { display: block; font-size: 0.7rem; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; }
+        input, select {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .preview-area {
+            margin-left: 340px;
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #report-page {
+            background: white;
+            width: 210mm;
+            height: 297mm;
+            padding: 1in;
+            box-sizing: border-box;
+            font-family: "Times New Roman", Times, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            color: black;
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+        }
+
+        .page-border {
+            border: 2px solid black;
+            position: absolute;
+            top: 0.15in; bottom: 0.15in; left: 0.15in; right: 0.15in;
+            pointer-events: none;
+        }
+
+        .uni-logo-display { max-width: 1.3in; max-height: 1.3in; margin-bottom: 15px; }
+        .text-center { text-align: center; width: 100%; }
+        .u-title { font-size: 24pt; font-weight: bold; margin: 0; }
+        .d-title { font-size: 16pt; font-weight: bold; margin: 5px 0 30px 0; }
+        
+        .course-wrap { font-size: 14pt; margin-bottom: 40px; line-height: 1.6; }
+        
+        .work-wrap { 
+            font-size: 14pt; 
+            margin-bottom: 80px;
+            font-weight: bold; 
+            line-height: 1.8; 
+        }
+
+        .submission-column {
+            width: 100%;
+            font-size: 12pt;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .sub-section { width: 100%; }
+        .u-line { font-weight: bold; text-decoration: underline; display: block; margin-bottom: 10px; }
+        .info-row { margin-bottom: 4px; }
+
+        .footer-dates { 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            font-size: 12pt; 
+            border-top: 1px solid #000; 
+            padding-top: 10px;
+            margin-top: auto;
+        }
+
+        .watermark-container {
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .creator-link {
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .print-btn {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body { background: white; margin: 0; padding: 0; }
+            .sidebar, .watermark-container { display: none !important; }
+            .preview-area { padding: 0; margin: 0; width: 100%; }
+            #report-page {
+                box-shadow: none;
+                margin: 0;
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Report Settings</h2>
+        
+        <div class="field">
+            <label>Mode</label>
+            <select id="docMode">
+                <option value="Experiment">Lab Report</option>
+                <option value="Assignment">Assignment</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Page Border</label>
+            <select id="bordShow">
+                <option value="block">Enable</option>
+                <option value="none">Disable</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Upload University Logo</label>
+            <input type="file" id="logoUpload" accept="image/*">
+        </div>
+
+        <hr style="border:0; border-top:1px solid #334155; margin:20px 0;">
+
+        <div class="field"><label>University</label><input type="text" id="inU" value="International Standard University"></div>
+        <div class="field"><label>Department</label><input type="text" id="inD" value="Department of Computer Science and Engineering"></div>
+        <div class="field"><label>Course Code</label><input type="text" id="inC" value=""></div>
+        <div class="field"><label>Course Title</label><input type="text" id="inT" value=""></div>
+        <div class="field"><label>No.</label><input type="text" id="inN" placeholder="01"></div>
+        <div class="field"><label>Work Title</label><input type="text" id="inW" placeholder="Enter Topic Name"></div>
+        <div class="field"><label>Student Name</label><input type="text" id="inS" value=""></div>
+        <div class="field"><label>Student ID</label><input type="text" id="inI" value=""></div>
+        <div class="field"><label>Batch/Group</label>
+            <div style="display:flex; gap:5px;"><input type="text" id="inB" value="9th"> <input type="text" id="inG" value="A1"></div>
+        </div>
+        <div class="field"><label>Submit To</label><input type="text" id="inTeacher" value=""></div>
+        <div class="field"><label>Designation</label><input type="text" id="inDesig" value=""></div>
+        
+        <div id="expDateField" class="field">
+            <label>Date of Experiment</label>
+            <input type="text" id="inD1" placeholder="Date of Exp.">
+        </div>
+        
+        <div class="field"><label>Sub. Date</label><input type="text" id="inD2" placeholder="Date of Sub."></div>
+        
+        <button class="print-btn" onclick="window.print()">Export to PDF</button>
+    </div>
+
+    <div class="preview-area">
+        <div id="report-page">
+            <div id="pageBorder" class="page-border"></div>
+
+            <img id="uniLogo" class="uni-logo-display" src="https://via.placeholder.com/150?text=Logo" alt="Logo">
+
+            <div class="text-center">
+                <div class="u-title" id="outU">International Standard University</div>
+                <div class="d-title" id="outD">Department of Computer Science and Engineering</div>
+            </div>
+
+            <div class="course-wrap text-center">
+                <strong>Course Code:</strong> <span id="outC"></span><br>
+                <strong>Course Title:</strong> <span id="outT"></span>
+            </div>
+
+            <div class="work-wrap text-center">
+                <span class="typeTxt">Experiment</span> No: <span id="outN">____</span><br>
+                Name of the <span class="typeTxt">Experiment</span>: <span id="outW">__________________________</span>
+            </div>
+
+            <div class="submission-column">
+                <div class="sub-section">
+                    <span class="u-line">Submitted by:</span>
+                    <div class="info-row">Name: <span id="outS"></span></div>
+                    <div class="info-row">ID: <span id="outI"></span></div>
+                    <div class="info-row">Batch: <span id="outB">9th</span></div>
+                    <div class="info-row">Group: <span id="outG">A1</span></div>
+                </div>
+
+                <div class="sub-section">
+                    <span class="u-line">Submitted to:</span>
+                    <div class="info-row">Name: <span id="outTeacher"></span></div>
+                    <div class="info-row"><span id="outDesig"></span></div>
+                </div>
+            </div>
+
+            <div class="footer-dates" id="footerDates">
+                <div id="expDateContainer">Date of Experiment: <span id="outD1">__________</span></div>
+                <div>Date of Submission: <span id="outD2">__________</span></div>
+            </div>
+        </div>
+
+        <div class="watermark-container">
+            Created by Md. Shabbir Hossen Bappy 
+            <a href="https://md-shabbirhossen-bappy.vercel.app/" target="_blank" class="creator-link">🔗 Profile</a>
+        </div>
+    </div>
+
+    <script>
+        const uiMap = {
+            'inU':'outU', 'inD':'outD', 'inC':'outC', 'inT':'outT',
+            'inN':'outN', 'inW':'outW', 'inS':'outS', 'inI':'outI',
+            'inB':'outB', 'inG':'outG', 'inTeacher':'outTeacher', 'inDesig':'outDesig',
+            'inD1':'outD1', 'inD2':'outD2'
+        };
+
+        Object.keys(uiMap).forEach(key => {
+            const inputEl = document.getElementById(key);
+            if(inputEl) {
+                inputEl.addEventListener('input', (e) => {
+                    document.getElementById(uiMap[key]).innerText = e.target.value;
+                });
+            }
+        });
+
+        document.getElementById('docMode').addEventListener('change', (e) => {
+            const mode = e.target.value;
+            document.querySelectorAll('.typeTxt').forEach(el => el.innerText = mode);
+            
+
+            const expInput = document.getElementById('expDateField');
+            const expDisplay = document.getElementById('expDateContainer');
+            const footer = document.getElementById('footerDates');
+
+            if (mode === 'Assignment') {
+                expInput.style.display = 'none';
+                expDisplay.style.display = 'none';
+                footer.style.justifyContent = 'center';
+            } else {
+                expInput.style.display = 'block';
+                expDisplay.style.display = 'block';
+                footer.style.justifyContent = 'space-between';
+            }
+        });
+
+        document.getElementById('bordShow').addEventListener('change', (e) => {
+            document.getElementById('pageBorder').style.display = e.target.value;
+        });
+
+        document.getElementById('logoUpload').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => document.getElementById('uniLogo').src = e.target.result;
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+</body>
+</bappy>
