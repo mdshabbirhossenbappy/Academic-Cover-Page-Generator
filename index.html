@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<bappy lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -150,10 +150,11 @@
             .sidebar, .watermark-container { display: none !important; }
             .preview-area { padding: 0; margin: 0; width: 100%; }
             #report-page {
-                box-shadow: none;
+                box-shadow: none !important;
                 margin: 0;
                 width: 210mm;
                 height: 297mm;
+                overflow: hidden;
             }
         }
     </style>
@@ -207,7 +208,7 @@
         
         <div class="field"><label>Sub. Date</label><input type="text" id="inD2" placeholder="Date of Sub."></div>
         
-        <button class="print-btn" onclick="window.print()">Export to PDF</button>
+        <button class="print-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
 
     <div class="preview-area">
@@ -258,7 +259,7 @@
             <a href="https://md-shabbirhossen-bappy.vercel.app/" target="_blank" class="creator-link">🔗 Profile</a>
         </div>
     </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         const uiMap = {
             'inU':'outU', 'inD':'outD', 'inC':'outC', 'inT':'outT',
@@ -307,6 +308,23 @@
                 reader.readAsDataURL(this.files[0]);
             }
         });
-    </script>
+
+        // ✅ ADD THIS PART ONLY
+        function downloadPDF() {
+    const element = document.getElementById('report-page');
+
+    const opt = {
+        margin:       0,
+        filename:     'Academic_Cover_Page.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, scrollY: 0 },
+        jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all'] }
+    };
+
+    html2pdf().set(opt).from(element).save();
+}
+</script>
+
 </body>
-</bappy>
+</html>
